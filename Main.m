@@ -1,7 +1,7 @@
 clc, clear
 
-k1=0.1;
-k2=0.05;
+k1=0.7;
+k2=0.13;
 
 load('data.mat')
 real_product = Product(star_rating, polarity, subjectivity);
@@ -17,4 +17,10 @@ for i = customers_index
     virtual_product = new_virtual_product;
 end
 virtual_ratings = virtual_product.reviews(2:real_products_in_total,1);
-plot(1:real_products_in_total-1, transpose(virtual_ratings),'*')
+% plot(1:real_products_in_total-1, transpose(virtual_ratings),'*')
+virtual_ratings_freq = [sum(virtual_ratings(:) <= 1);sum(virtual_ratings(:) == 2);sum(virtual_ratings(:) == 3);sum(virtual_ratings(:) == 4);sum(virtual_ratings(:) >= 5)];
+real_ratings_freq = [sum(star_rating(:) <= 1);sum(star_rating(:) == 2);sum(star_rating(:) == 3);sum(star_rating(:) == 4);sum(star_rating(:) >= 5)];
+bar([virtual_ratings_freq,real_ratings_freq])
+legend('virtual ratings','real ratings')
+xlabel('stars')
+ylabel('numbers')
