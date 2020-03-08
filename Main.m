@@ -1,41 +1,9 @@
 clc, clear
 
-k1=0.8;
-k2=0.2;
+k1=0.7;
+k2=0.13;
+
 load('data.mat')
-
-
-old_error_of_ratings_freq = 0;
-new_error_of_ratings_freq = 100000000000000;
-new_delta_of_ratings_freq = 100000000000000;
-virtual_ratings_freq = 0;
-real_ratings_freq =0;
-is_k1_done = 0;
-is_k2_done = 0;
-
-
-
-while is_k1_done + is_k2_done <2
-    old_error_of_ratings_freq = new_error_of_ratings_freq;
-    new_error_of_ratings_freq = abs(sum(virtual_ratings_freq - real_ratings_freq));
-    old_delta_of_ratings_freq = new_delta_of_ratings_freq;
-    new_delta_of_ratings_freq = abs(new_error_of_ratings_freq - old_error_of_ratings_freq);
-    if is_k1_done == 0
-        if new_delta_of_ratings_freq > old_delta_of_ratings_freq
-            is_k1_done = 1;
-        else
-            k1 = k1 - rand()/100
-        end
-    elseif is_k2_done == 0
-        if new_delta_of_ratings_freq > old_delta_of_ratings_freq
-            is_k2_done = 1;
-        else
-            k2 = k2 - rand()/100
-        end
-    else
-        break
-    end
-
 real_product = Product(star_rating, polarity, subjectivity);
 real_products_in_total = size(real_product.reviews,1);
 
@@ -52,9 +20,6 @@ virtual_ratings = virtual_product.reviews(2:real_products_in_total,1);
 % plot(1:real_products_in_total-1, transpose(virtual_ratings),'*')
 virtual_ratings_freq = [sum(virtual_ratings(:) <= 1);sum(virtual_ratings(:) == 2);sum(virtual_ratings(:) == 3);sum(virtual_ratings(:) == 4);sum(virtual_ratings(:) >= 5)];
 real_ratings_freq = [sum(star_rating(:) <= 1);sum(star_rating(:) == 2);sum(star_rating(:) == 3);sum(star_rating(:) == 4);sum(star_rating(:) >= 5)];
-
-end
-
 bar([virtual_ratings_freq,real_ratings_freq])
 legend('virtual ratings','real ratings')
 xlabel('stars')
