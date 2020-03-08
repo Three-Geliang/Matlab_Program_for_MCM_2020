@@ -20,7 +20,9 @@ virtual_ratings = virtual_product.reviews(2:real_products_in_total,1);
 % plot(1:real_products_in_total-1, transpose(virtual_ratings),'*')
 virtual_ratings_freq = [sum(virtual_ratings(:) <= 1);sum(virtual_ratings(:) == 2);sum(virtual_ratings(:) == 3);sum(virtual_ratings(:) == 4);sum(virtual_ratings(:) >= 5)];
 real_ratings_freq = [sum(star_rating(:) <= 1);sum(star_rating(:) == 2);sum(star_rating(:) == 3);sum(star_rating(:) == 4);sum(star_rating(:) >= 5)];
+error_of_ratings_freq = sum(abs(virtual_ratings_freq - real_ratings_freq));
 bar([virtual_ratings_freq,real_ratings_freq])
 legend('virtual ratings','real ratings')
 xlabel('stars')
 ylabel('numbers')
+title(['k1=',num2str(k1),', k2=',num2str(k2),', error=', num2str(error_of_ratings_freq)])
