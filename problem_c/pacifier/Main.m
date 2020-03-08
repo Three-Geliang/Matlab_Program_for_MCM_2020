@@ -16,13 +16,30 @@ for i = customers_index
     new_virtual_product = Product([virtual_product.reviews(:,1);new_review(:,1)],[virtual_product.reviews(:,2);new_review(:,2)],[virtual_product.reviews(:,3);new_review(:,3)]);
     virtual_product = new_virtual_product;
 end
+
+real_customers_amount = real_products_in_total;
+
+load('pacifier_data.mat')
+
+for i = real_products_in_total:real_products_in_total+5000
+    new_customer_polarity = normrnd(pacifier_polarity_fit.mu,pacifier_polarity_fit.sigma);
+    new_customer_subjectivity = normrnd(pacifier_subjectivity_fit.mu,pacifier_subjectivity_fit.sigma);
+    % I used the curve fitting tool to get the relationship between
+    % ploarity and rating
+    new_customer_star_rating = floor(0.4172*new_customer_polarity + 3.957);
+    new_customer = Customer(virtual_product, new_customer_star_rating, new_customer_polarity, new_customer_subjectivity, k1, k2);
+    new_review = [new_customer.rating,new_customer.polarity,new_customer.subjectivity];
+    new_virtual_product = Product([virtual_product.reviews(:,1);new_review(:,1)],[virtual_product.reviews(:,2);new_review(:,2)],[virtual_product.reviews(:,3);new_review(:,3)]);
+    virtual_product = new_virtual_product;
+end
 virtual_ratings = virtual_product.reviews(2:real_products_in_total,1);
-% plot(1:real_products_in_total-1, transpose(virtual_ratings),'*')
+future_ratings = virtual_product.reviews(real_products_in_total:real_products_in_total+5000,1);
 virtual_ratings_freq = [sum(virtual_ratings(:) <= 1);sum(virtual_ratings(:) == 2);sum(virtual_ratings(:) == 3);sum(virtual_ratings(:) == 4);sum(virtual_ratings(:) >= 5)];
+future_ratings_freq = [sum(future_ratings(:) <= 1);sum(future_ratings(:) == 2);sum(future_ratings(:) == 3);sum(future_ratings(:) == 4);sum(future_ratings(:) >= 5)];
 real_ratings_freq = [sum(star_rating(:) <= 1);sum(star_rating(:) == 2);sum(star_rating(:) == 3);sum(star_rating(:) == 4);sum(star_rating(:) >= 5)];
 error_of_ratings_freq = sum(abs(virtual_ratings_freq - real_ratings_freq));
-bar([virtual_ratings_freq,real_ratings_freq])
-legend('virtual ratings','real ratings')
+bar([virtual_ratings_freq,real_ratings_freq,future_ratings_freq])
+legend('virtual ratings','real ratings','future ratings')
 xlabel('stars')
 ylabel('numbers')
 title(['k1=',num2str(k1),', k2=',num2str(k2),', error=', num2str(error_of_ratings_freq)])
